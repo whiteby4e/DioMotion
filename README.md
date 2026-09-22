@@ -9,6 +9,7 @@ Camera-based motion tracking that turns your movements into DIO-inspired actions
 - Two-hand landmark detection with MediaPipe
 - Gesture-based DIO actions
 - Sound effects triggered by detected gestures
+- Continues running if the audio device is unavailable
 - Configurable camera, cooldown, and gesture sensitivity
 - Local model and sound assets included in the repository
 
@@ -23,7 +24,7 @@ Camera-based motion tracking that turns your movements into DIO-inspired actions
 | Pointing gesture | ZA WARUDO |
 | Point + thumb gesture | KONO DIO DA |
 
-Press **Q** to quit.
+Press **Q** or **Esc** to quit.
 
 ## Project structure
 
