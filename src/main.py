@@ -4,7 +4,7 @@ import pygame
 import time
 import os
 import math
-import config
+import sys
 
 
 # =========================================================
@@ -13,6 +13,14 @@ import config
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(BASE_DIR)
+
+# Allow the script to import project-level modules when launched as:
+# python src/main.py
+if PROJECT_DIR not in sys.path:
+    sys.path.insert(0, PROJECT_DIR)
+
+import config
+
 ASSETS_DIR = os.path.join(PROJECT_DIR, "assets")
 MODELS_DIR = os.path.join(ASSETS_DIR, "models")
 SOUNDS_DIR = os.path.join(ASSETS_DIR, "sounds")
@@ -421,12 +429,6 @@ while True:
             # GESTURE DETECTION
             # =================================================
 
-            index, middle, ring, pinky = get_fingers(hand)
-            index_tip = hand[8]
-            thumb_tip = hand[4]
-            wrist = hand[0]
-
-            index_dist = distance(index_tip, wrist)
             thumb_dist = distance(thumb_tip, wrist)
 
             if index and head_distance < config.HEAD_GESTURE_DISTANCE:
@@ -548,7 +550,8 @@ while True:
 
     if key == ord("q"):
 
-        print("mi bombo")
+        print("DIO ENGINE: stopping...")
+        break
 
 
 # =========================================================
