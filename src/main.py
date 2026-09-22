@@ -4,6 +4,7 @@ import pygame
 import time
 import os
 import math
+import config
 
 
 # =========================================================
@@ -11,9 +12,10 @@ import math
 # =========================================================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-MODELS_DIR = os.path.join(BASE_DIR, "models")
-SOUNDS_DIR = os.path.join(BASE_DIR, "sounds")
+PROJECT_DIR = os.path.dirname(BASE_DIR)
+ASSETS_DIR = os.path.join(PROJECT_DIR, "assets")
+MODELS_DIR = os.path.join(ASSETS_DIR, "models")
+SOUNDS_DIR = os.path.join(ASSETS_DIR, "sounds")
 
 
 FACE_MODEL = os.path.join(
@@ -78,7 +80,7 @@ pygame.mixer.init()
 
 last_sound_time = 0
 
-COOLDOWN = 1.5
+COOLDOWN = config.COOLDOWN
 
 
 def play_sound(name):
@@ -187,7 +189,7 @@ print("MediaPipe ready!")
 # CAMERA
 # =========================================================
 
-camera = cv2.VideoCapture(0)
+camera = cv2.VideoCapture(config.CAMERA_INDEX)
 
 if not camera.isOpened():
 
@@ -311,7 +313,7 @@ while True:
             lower_lip.y - upper_lip.y
         )
 
-        if mouth_distance > 0.035:
+        if mouth_distance > config.MOUTH_SENSITIVITY:
 
             mouth_open = True
 
@@ -415,101 +417,42 @@ while True:
                 detected_gesture = "HIGH"
 
 
-           # =================================================
-# GESTURE DETECTION
-# =================================================
+            # =================================================
+            # GESTURE DETECTION
+            # =================================================
 
-index, middle, ring, pinky = get_fingers(hand)
+            index, middle, ring, pinky = get_fingers(hand)
+            index_tip = hand[8]
+            thumb_tip = hand[4]
+            wrist = hand[0]
 
-index_tip = hand[8]
-thumb_tip = hand[4]
-wrist = hand[0]
+            index_dist = distance(index_tip, wrist)
+            thumb_dist = distance(thumb_tip, wrist)
 
-# فاصله انگشت‌ها از مچ
-index_dist = distance(index_tip, wrist)
-thumb_dist = distance(thumb_tip, wrist)
+            if index and head_distance < config.HEAD_GESTURE_DISTANCE:
+                detected_gesture = "HIGH"
 
-# =================================================
-# 1. HIGH
-# =================================================
+            elif index and not middle and not ring and not pinky:
+                thumb_open = thumb_dist > config.THUMB_OPEN_DISTANCE
 
-if index and head_distance < 0.18:
+                if thumb_open:
+                    face_x = 0.50
+                    face_y = 0.40
+                    thumb_to_face = math.sqrt((thumb_tip.x - face_x) ** 2 + (thumb_tip.y - face_y) ** 2)
+                    index_to_face = math.sqrt((index_tip.x - face_x) ** 2 + (index_tip.y - face_y) ** 2)
 
-    detected_gesture = "HIGH"
+                    if thumb_to_face < index_to_face * config.KONO_FACE_RATIO:
+                        detected_gesture = "KONO_DIO_DA"
+                    else:
+                        detected_gesture = "ZA_WARUDO"
+                else:
+                    detected_gesture = "ZA_WARUDO"
 
+            elif index and middle and ring and pinky:
+                detected_gesture = "WRYYY"
 
-# =================================================
-# 2. KONO DIO DA
-# =================================================
-
-elif (
-    index
-    and not middle
-    and not ring
-    and not pinky
-):
-
-    # شست باید واقعاً باز باشد
-    thumb_open = thumb_dist > 0.18
-
-    if thumb_open:
-
-        # مرکز تقریبی صورت
-        face_x = 0.50
-        face_y = 0.40
-
-        # فاصله شست تا صورت
-        thumb_to_face = math.sqrt(
-            (thumb_tip.x - face_x) ** 2 +
-            (thumb_tip.y - face_y) ** 2
-        )
-
-        # فاصله نوک اشاره تا صورت
-        index_to_face = math.sqrt(
-            (index_tip.x - face_x) ** 2 +
-            (index_tip.y - face_y) ** 2
-        )
-
-        # برای KONO، شست باید نسبتاً به خودت نزدیک‌تر باشد
-        if thumb_to_face < index_to_face * 0.85:
-
-            detected_gesture = "KONO_DIO_DA"
-
-        else:
-
-            detected_gesture = "ZA_WARUDO"
-
-    else:
-
-        detected_gesture = "ZA_WARUDO"
-
-
-# =================================================
-# 3. OPEN PALM
-# =================================================
-
-elif (
-    index
-    and middle
-    and ring
-    and pinky
-):
-
-    detected_gesture = "WRYYY"
-
-
-# =================================================
-# 4. FIST
-# =================================================
-
-elif (
-    not index
-    and not middle
-    and not ring
-    and not pinky
-):
-
-    detected_gesture = "MUDA"
+            elif not index and not middle and not ring and not pinky:
+                detected_gesture = "MUDA"
 
     # =====================================================
     # MOUTH HAS HIGHEST PRIORITY

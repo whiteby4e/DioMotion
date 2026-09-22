@@ -1,9 +1,8 @@
-Camera
-FPS
-Cooldown
-Mouth sensitivity
-Hand sensitivity
-Effect duration
-Shake intensity
-Zoom intensity
-Volume
+"""DioMotion configuration."""
+
+CAMERA_INDEX = 0
+COOLDOWN = 1.5
+MOUTH_SENSITIVITY = 0.035
+HEAD_GESTURE_DISTANCE = 0.18
+THUMB_OPEN_DISTANCE = 0.18
+KONO_FACE_RATIO = 0.85
