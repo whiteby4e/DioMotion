@@ -5,6 +5,7 @@ import time
 import os
 import math
 import sys
+import atexit
 
 
 # =========================================================
@@ -140,6 +141,24 @@ if not camera.isOpened():
     hand_landmarker.close()
     pygame.quit()
     raise SystemExit
+
+def cleanup():
+    if camera is not None:
+        camera.release()
+    cv2.destroyAllWindows()
+    try:
+        face_landmarker.close()
+    except Exception:
+        pass
+    try:
+        hand_landmarker.close()
+    except Exception:
+        pass
+    if AUDIO_AVAILABLE:
+        pygame.mixer.music.stop()
+    pygame.quit()
+
+atexit.register(cleanup)
 
 # Reduce capture resolution for weak PCs.
 camera.set(cv2.CAP_PROP_FRAME_WIDTH, config.FRAME_WIDTH)
@@ -388,14 +407,5 @@ while True:
         print("DIO ENGINE: stopping...")
         break
 
-camera.release()
-cv2.destroyAllWindows()
-face_landmarker.close()
-hand_landmarker.close()
-
-if AUDIO_AVAILABLE:
-    pygame.mixer.music.stop()
-
-pygame.quit()
-
+cleanup()
 print("DIO ENGINE OFF")
