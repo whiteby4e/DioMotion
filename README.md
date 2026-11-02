@@ -1,21 +1,26 @@
+<div align="center">
+
 # DioMotion
 
-Camera-based motion tracking that turns your movements into DIO-inspired actions and sound effects.
+**Your gestures. DIO-inspired reactions.**
 
-## Features
+A camera-based computer-vision project that maps face and hand gestures to dramatic actions and sound effects.
 
-- Real-time camera input with OpenCV
-- Face landmark detection with MediaPipe
-- Two-hand landmark detection with MediaPipe
-- Gesture-based DIO actions
-- Sound effects triggered by detected gestures
-- Continues running if the audio device is unavailable
-- Configurable camera, cooldown, and gesture sensitivity
-- Local model and sound assets included in the repository
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)
+![OpenCV](https://img.shields.io/badge/Vision-OpenCV%20%2B%20MediaPipe-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-## Gesture controls
+</div>
 
-| Gesture | Action |
+---
+
+## 🎬 What it does
+
+DioMotion reads live camera frames, detects face and hand landmarks, and triggers a matching action when a configured gesture is recognized. Audio playback is optional at runtime: the application can continue if an audio device is unavailable.
+
+## ✨ Gesture controls
+
+| Detected gesture | Action |
 |---|---|
 | Mouth open | ROAD ROLLER |
 | Finger near head | SAIKO NI HIGH |
@@ -26,61 +31,79 @@ Camera-based motion tracking that turns your movements into DIO-inspired actions
 
 Press **Q** or **Esc** to quit.
 
-## Project structure
+## ⚡ Quick start
 
-```text
-DioMotion/
-├── README.md
-├── LICENSE
-├── .gitignore
-├── requirements.txt
-├── config.py
-├── src/
-│   └── main.py
-└── assets/
-    ├── models/
-    │   ├── face_landmarker.task
-    │   └── hand_landmarker.task
-    └── sounds/
-        ├── high.mp3
-        ├── kono_dio_da.mp3
-        ├── muda.mp3
-        ├── roadroller.wav
-        ├── wryy.wav
-        └── za_warudo.mp3
-```
+### Requirements
 
-## Setup
+- Python 3.10 or newer is recommended.
+- A working webcam.
+- Windows, Linux, or macOS with compatible OpenCV, MediaPipe, and Pygame wheels.
 
-Python 3.10+ is recommended.
-
-Install the dependencies:
+### Install and run
 
 ```bash
-pip install -r requirements.txt
-```
+git clone https://github.com/whiteby4e/DioMotion.git
+cd DioMotion
 
-Run:
+python -m venv .venv
 
-```bash
+# Windows
+.venv\Scripts\activate
+
+# Linux / macOS
+source .venv/bin/activate
+
+python -m pip install -r requirements.txt
 python src/main.py
 ```
 
-Make sure your camera is available before starting the program.
+Allow camera access if your operating system asks for permission.
 
-## Configuration
+## ⚙️ Configuration
 
-Edit `config.py` to change:
+Edit `config.py` to adjust:
 
-- Camera index
-- Gesture cooldown
-- Mouth sensitivity
-- Hand/gesture thresholds
+| Setting | Purpose |
+|---|---|
+| `CAMERA_INDEX` | Camera device index |
+| `COOLDOWN` | Delay between repeated actions |
+| `MOUTH_SENSITIVITY` | Mouth-open detection threshold |
+| `HEAD_GESTURE_DISTANCE` | Face-relative gesture distance |
+| `THUMB_OPEN_DISTANCE` | Thumb gesture threshold |
+| `KONO_FACE_RATIO` | Point-and-thumb gesture threshold |
+| `FRAME_WIDTH`, `FRAME_HEIGHT` | Camera capture dimensions |
+| `PROCESS_SCALE` | Frame scale used for processing |
 
-## License
+If a gesture is not recognized reliably, adjust one setting at a time and test again.
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE).
+## 🧩 How it is organized
 
-## Disclaimer
+```text
+DioMotion/
+├── config.py
+├── requirements.txt
+├── src/
+│   ├── main.py
+│   └── gesture_engine.py
+├── tests/
+│   └── test_gesture_engine.py
+└── assets/
+    ├── models/
+    └── sounds/
+```
 
-DioMotion is a fan-made project inspired by *JoJo's Bizarre Adventure*. It is not affiliated with or endorsed by the rights holders.
+The MediaPipe task models and sound assets are included under `assets/`.
+
+## 🧪 Tests
+
+```bash
+python -m unittest discover -s tests
+```
+
+## ⚠️ Note
+
+DioMotion is a fan-made project inspired by *JoJo's Bizarre Adventure*. It is not affiliated with or endorsed by the rights holders. Use the camera only with the knowledge and permission of people being recorded.
+
+## 📄 License
+
+The repository source code is released under the MIT License. See [LICENSE](LICENSE). Check third-party asset terms before redistributing bundled models or media.
